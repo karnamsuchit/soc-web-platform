@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.upload import router as upload_router
 from api.parser import router as parser_router
+from api.detection import router as detection_router
 
 app = FastAPI(
     title="SOC Log Analysis Platform",
@@ -19,6 +20,7 @@ app.add_middleware(
 
 app.include_router(upload_router)
 app.include_router(parser_router)
+app.include_router(detection_router)
 
 @app.get("/")
 def home():

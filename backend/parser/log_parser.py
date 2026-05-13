@@ -53,18 +53,60 @@ def parse_csv_file(file_path):
 
     with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
 
-        reader = csv.DictReader(file)
+        lines = file.readlines()
 
-        for row in reader:
+    active_headers = None
 
-            normalized_row = {
-                key.strip(): value.strip()
-                for key, value in row.items()
-            }
+    for raw_line in lines:
 
-            normalized_row["log_type"] = "csv"
+        line = raw_line.strip()
 
-            parsed_logs.append(normalized_row)
+        # Skip empty lines
+        if not line:
+            continue
+
+        columns = [col.strip() for col in line.split(",")]
+
+        # Detect Aircrack/WiFi header
+        if "BSSID" in columns:
+
+            active_headers = columns
+            continue
+
+        # Detect Station section
+        if "Station MAC" in columns:
+
+            active_headers = columns
+            continue
+
+        # Skip malformed rows
+        if not active_headers:
+            continue
+
+        # Normalize row length
+        if len(columns) < len(active_headers):
+
+            columns.extend(
+                [""] * (
+                    len(active_headers) - len(columns)
+                )
+            )
+
+        normalized_row = {}
+
+        for index, header in enumerate(active_headers):
+
+            value = (
+                columns[index]
+                if index < len(columns)
+                else ""
+            )
+
+            normalized_row[header] = value
+
+        normalized_row["log_type"] = "csv"
+
+        parsed_logs.append(normalized_row)
 
     return parsed_logs
 

@@ -6,7 +6,7 @@
 
 # Current Phase
 
-Phase 3 — Secure Upload API & SOC Ingestion Workflow
+Phase 5 — Threat Detection Engine & Advanced Multi-Format Parsing
 
 ---
 
@@ -14,7 +14,7 @@ Phase 3 — Secure Upload API & SOC Ingestion Workflow
 
 Build a professional SOC (Security Operations Center) and SIEM-style web application capable of:
 
-- Uploading HTTP access logs
+- Uploading security log files
 - Parsing and normalizing logs
 - Detecting malicious activity
 - Mapping threats to MITRE ATT&CK
@@ -22,8 +22,27 @@ Build a professional SOC (Security Operations Center) and SIEM-style web applica
 - Generating alerts and reports
 - Simulating enterprise SOC workflows
 
-Primary Dataset:
-- NASA Kennedy Space Center HTTP Access Logs
+---
+
+# Vision Upgrade
+
+## Initial Direction
+- NASA HTTP log analysis platform
+
+## Current Direction
+Transitioned into a:
+
+- Generic SOC log analysis platform
+- Multi-format SIEM ingestion system
+- Enterprise-style detection engineering platform
+
+The platform is now designed to support:
+- Apache HTTP logs
+- NASA HTTP logs
+- CSV security logs
+- Wireless capture CSV logs
+- Generic text-based logs
+- Future firewall/IDS log support
 
 ---
 
@@ -38,7 +57,7 @@ Primary Dataset:
 - Initialized Git repository
 - Created scalable enterprise project structure
 - Separated frontend and backend architecture
-- Added project tracking documentation files
+- Added documentation and tracking files
 
 ## Project Structure
 
@@ -98,8 +117,9 @@ backend/
 ## Backend Features Completed
 - Created FastAPI starter server
 - Added root API endpoint
-- Verified API execution
 - Enabled Swagger API documentation
+- Enabled CORS middleware
+- Added modular API routing
 
 ## Backend Status
 - Operational
@@ -130,10 +150,6 @@ backend/
 
 # 4. Initial Upload System
 
-## Components Created
-- UploadPage.jsx
-- FileUpload.jsx
-
 ## Features Added
 - File selection
 - File validation
@@ -149,14 +165,14 @@ backend/
 
 # 5. Enterprise Dashboard Architecture
 
-## UI Redesign Decision
+## UI Redesign
 Transitioned from:
 - simple upload page
 
 To:
 - enterprise SOC dashboard architecture
 
-## Planned Dashboard Features
+## Dashboard Features
 - Sidebar navigation
 - Top navigation bar
 - Upload workflow dashboard
@@ -169,7 +185,7 @@ To:
 
 # 6. Enterprise Frontend Structure
 
-## New Frontend Structure
+## Frontend Structure
 
 frontend/src/
 │
@@ -215,7 +231,7 @@ TailwindCSS styles were not rendering correctly.
 - Removed incompatible Tailwind Vite package
 - Installed stable TailwindCSS v3.4.3
 - Reconfigured Tailwind setup
-- Restored proper dashboard styling
+- Restored dashboard styling
 
 ## Result
 - TailwindCSS functioning correctly
@@ -271,7 +287,7 @@ Kali Linux apt repositories returned:
 - Reusable layout architecture
 
 ## Result
-- Frontend now resembles enterprise SIEM/SOC platforms
+- Frontend resembles enterprise SIEM/SOC platforms
 - Professional cybersecurity dashboard UI established
 
 ---
@@ -293,7 +309,7 @@ Kali Linux apt repositories returned:
 - Added upload state management
 
 ## SOC Relevance
-Implemented first SIEM-style ingestion workflow:
+Implemented SIEM-style ingestion workflow:
 - secure log intake
 - upload validation
 - centralized storage
@@ -331,16 +347,248 @@ Swagger now correctly exposes:
 
 ---
 
+# 12. Initial Parser Engine
+
+## Initial Features
+- Regex-based Apache/NASA parser
+- Structured metadata extraction
+- Malformed log handling
+- Timestamp normalization
+
+## Extracted Fields
+- IP address
+- Timestamp
+- HTTP method
+- URL
+- Protocol
+- Status code
+- Response size
+
+## Parser API
+- Created parser API endpoint
+- Connected parser to uploaded logs
+- Added file existence validation
+- Added structured parser responses
+
+---
+
+# 13. Git Tracking & Repository Verification
+
+## Git Workflow Validation
+- Verified repository root directory
+- Verified tracked project files
+- Verified parser engine tracking
+- Verified upload workflow tracking
+
+## Git Best Practices Applied
+- Save before commit
+- Verify git status
+- Verify tracked files
+- Validate repository structure
+
+---
+
+# 14. GitHub Repository Integration
+
+## GitHub Setup
+- Created remote GitHub repository
+- Connected local repository to GitHub
+- Verified commit history
+- Verified repository synchronization
+
+## Result
+Project fully tracked on GitHub with:
+- frontend source code
+- backend APIs
+- parser engine
+- documentation
+- dashboard implementation
+
+---
+
+# 15. GitHub Authentication Setup
+
+## Authentication Issue
+
+### Problem
+GitHub rejected password authentication for git push.
+
+### Cause
+GitHub deprecated password-based authentication.
+
+### Resolution
+- Configured Personal Access Token authentication
+- Verified remote repository synchronization
+
+---
+
+# 16. Parser Validation Testing
+
+## Parser Testing
+- Tested parser against unsupported log formats
+- Verified malformed log detection
+- Verified parser validation workflow
+- Verified regex enforcement
+
+## Result
+Parser correctly:
+- validated Apache logs
+- rejected unsupported formats
+- identified malformed entries
+- simulated SIEM normalization behavior
+
+---
+
+# 17. Multi-Format Parser Architecture
+
+## Parser Upgrade
+Transitioned from:
+- NASA-specific parser
+
+To:
+- generic multi-format parser engine
+
+## Supported Formats
+- Apache HTTP logs
+- NASA HTTP logs
+- CSV security logs
+- Generic text logs
+- Wireless capture CSV logs
+
+## Features Added
+- Automatic format detection
+- Parser routing
+- CSV normalization
+- Generic text parsing
+- Structured event generation
+
+## Parser Workflow
+
+Upload file
+    ↓
+Detect file format
+    ↓
+Select parser
+    ↓
+Normalize events
+    ↓
+Generate structured security events
+
+## Result
+Platform can now:
+- ingest multiple log formats
+- normalize diverse security data
+- process generic security events
+- simulate enterprise log ingestion systems
+
+---
+
+# 18. Threat Detection Engine
+
+## Detection Engine Implementation
+- Built rule-based threat detection engine
+- Added reconnaissance detection
+- Added excessive 404 detection
+- Added SQL injection detection
+- Added XSS detection
+- Added suspicious scanning detection
+
+## Detection Categories
+- Reconnaissance activity
+- SQL injection attempts
+- Cross-site scripting attempts
+- Excessive 404 activity
+- Sensitive endpoint scanning
+
+## Detection API
+- Created detection API endpoint
+- Connected parser engine to detection engine
+- Added structured alert generation
+
+## Result
+Platform can now:
+- analyze parsed logs
+- detect suspicious behavior
+- generate security alerts
+- simulate SOC detection pipelines
+
+---
+
+# 19. Secure Upload Filename Workflow
+
+## Upload Security Enhancement
+- Implemented UUID-based upload filenames
+- Added secure upload naming workflow
+- Added filename collision prevention
+
+## API Workflow
+Upload process now:
+- stores original filename
+- generates secure UUID filename
+- uses UUID filename for parser/detection workflows
+
+## Result
+Platform securely manages uploaded files using internal identifiers
+
+---
+
+# 20. Robust CSV Parser Handling
+
+## CSV Parser Enhancement
+- Added null-safe CSV normalization
+- Added malformed field handling
+- Added resilient CSV ingestion logic
+
+## Parser Improvements
+- Handles missing values
+- Handles inconsistent CSV rows
+- Handles malformed CSV exports
+- Prevents parser crashes from null fields
+
+## Result
+Parser safely processes inconsistent CSV security logs
+
+---
+
+# 21. Smart CSV Section Parser
+
+## CSV Parser Upgrade
+- Added multi-section CSV parsing
+- Added Aircrack-ng CSV support
+- Added dynamic header detection
+- Added irregular CSV normalization
+
+## Features Added
+- Empty row skipping
+- Dynamic section parsing
+- Header auto-detection
+- Row normalization
+- Multi-table CSV handling
+
+## Supported CSV Types
+- Standard CSV logs
+- Wireless capture CSV exports
+- Multi-section security CSVs
+- Irregular vendor exports
+
+## Result
+Platform correctly parses:
+- Aircrack-ng CSV captures
+- multi-section security logs
+- irregular security telemetry
+
+---
+
 # Current Work
 
 ## Active Development
-SOC ingestion workflow enhancement
+Threat analytics and SOC detection pipeline enhancement
 
 ## Current Focus
-- Testing secure upload workflow
-- Validating frontend/backend integration
-- Preparing parser engine architecture
-- Building log normalization workflow
+- Detection rule improvements
+- Alert visualization planning
+- Structured event analytics
+- Preparing MITRE ATT&CK integration
 
 ---
 
@@ -376,20 +624,20 @@ SOC ingestion workflow enhancement
 - Malware-safe validation
 - Duplicate file handling
 
-## Parser Engine
-- Regex-based parser
-- NASA log normalization
-- Malformed log handling
-- Metadata extraction
+## Parser Enhancements
+- JSON log support
+- Syslog support
+- Firewall log support
+- Windows Event Log support
+- IDS/IPS log support
 
-## Detection Engine
-- Excessive 404 detection
-- Reconnaissance detection
-- SQL injection detection
-- XSS detection
-- Directory traversal detection
-- Request spike detection
-- Brute-force detection
+## Detection Engine Improvements
+- Threat scoring
+- Correlation rules
+- Time-based analytics
+- Brute-force correlation
+- Multi-event correlation
+- GeoIP threat enrichment
 
 ## MITRE ATT&CK Integration
 - ATT&CK mapping engine
@@ -463,11 +711,46 @@ SOC ingestion workflow enhancement
 
 ---
 
+# Parser Architecture
+
+## Design Philosophy
+Transitioned from:
+- single-source parser
+
+To:
+- enterprise multi-source parser engine
+
+## Parser Goals
+- Dynamic source detection
+- Generic normalization
+- Scalable ingestion
+- Parser routing architecture
+
+---
+
+# Detection Engine Architecture
+
+## Detection Philosophy
+- Rule-based detection
+- Signature matching
+- SOC alert simulation
+- Detection engineering workflows
+
+## Current Detection Types
+- Reconnaissance detection
+- SQL injection detection
+- XSS detection
+- Excessive 404 detection
+- Sensitive endpoint scanning
+
+---
+
 # Current System Status
 
 | Component | Status |
 |---|---|
 | Git Repository | Operational |
+| GitHub Repository | Operational |
 | Backend API | Operational |
 | Swagger Docs | Operational |
 | React Frontend | Operational |
@@ -477,8 +760,10 @@ SOC ingestion workflow enhancement
 | Upload API | Operational |
 | Frontend Upload Integration | Operational |
 | Secure File Storage | Operational |
-| Parser Engine | Pending |
-| Detection Engine | Pending |
+| Multi-Format Parser Engine | Operational |
+| Structured Event Extraction | Operational |
+| Threat Detection Engine | Operational |
+| Alert Generation | Operational |
 | Database Integration | Pending |
 | Reporting Module | Pending |
 | Threat Intelligence Module | Pending |
@@ -487,13 +772,13 @@ SOC ingestion workflow enhancement
 
 # Immediate Next Steps
 
-1. Implement drag-and-drop upload support
-2. Add upload progress tracking
-3. Build parser engine architecture
-4. Create regex extraction engine
-5. Normalize NASA HTTP logs
-6. Store parsed logs
-7. Build detection pipeline
+1. Build MITRE ATT&CK mapper
+2. Add threat scoring system
+3. Create alert dashboard widgets
+4. Add charts and analytics
+5. Store alerts in database
+6. Add GeoIP enrichment
+7. Build reporting module
 
 ---
 
@@ -533,25 +818,27 @@ Frontend inspired by:
 # Overall Progress
 
 Estimated Completion:
-- ~45% Complete
+- ~65% Complete
 
 Completed Areas:
 - Environment setup
 - Backend initialization
 - Frontend initialization
-- Architecture planning
-- Initial upload workflow
-- Enterprise redesign planning
-- TailwindCSS recovery
+- Upload workflow
 - Enterprise dashboard implementation
 - Secure upload API integration
 - Frontend/backend upload workflow
+- Multi-format parser engine
+- Structured event normalization
+- Threat detection engine
+- Alert generation
+- GitHub integration
 
 Major Remaining Areas:
-- Parser engine
-- Detection engine
+- MITRE ATT&CK integration
+- Database integration
 - Charts and analytics
 - Reports
 - Threat intelligence
 - Real-time monitoring
-- Database integration
+- Advanced correlation rules
