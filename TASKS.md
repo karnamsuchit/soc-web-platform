@@ -24,6 +24,7 @@
 - Add downloadable PDF reports
 - Add CSV exports
 - Add JSON IOC exports
+- Add printable SOC reports
 
 ---
 
@@ -106,6 +107,8 @@
 - Analytics chart integration
 - MITRE visualization widgets
 - Multi-page routing system
+- Global shared state management
+- Dynamic alerts and reports pages
 
 ---
 
@@ -124,3 +127,14 @@
 - Structured alert generation
 - Multi-format ingestion workflow
 - ATT&CK enrichment workflow
+- Centralized detection state handling
+
+---
+
+## Datasets
+- Enterprise attack datasets
+- Large-scale attack dataset generator
+- Mixed attack traffic simulation
+- Reconnaissance simulation
+- SQLi attack simulation
+- XSS attack simulation

@@ -2,6 +2,38 @@
 
 ---
 
+# v1.3.0
+
+## Added
+- Global detection state management
+- React Context API integration
+- Shared analytics state across pages
+- Dynamic alerts page
+- Dynamic reports page
+- Enterprise dataset generator
+- Large-scale SOC dataset support
+
+## Improved
+- Multi-page SOC workflow
+- Alert synchronization
+- Incident summary synchronization
+- Dashboard analytics consistency
+- MITRE visualization consistency
+
+## UI Enhancements
+- Shared dashboard state
+- Real-time page synchronization
+- Dynamic incident reporting
+- Cross-page analytics updates
+
+## SOC Features
+- Centralized SOC state management
+- Enterprise-scale attack datasets
+- Dynamic incident summaries
+- Unified threat analytics
+
+---
+
 # v1.2.0
 
 ## Added
