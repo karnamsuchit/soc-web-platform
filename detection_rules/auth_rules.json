@@ -1,0 +1,18 @@
+[
+  {
+    "type": "Failed Login",
+    "pattern": "authentication failure OR failed password OR HTTP 401/403 on login",
+    "severity": "Low",
+    "mitre_technique": "T1110",
+    "category": "authentication",
+    "description": "Creates a low-severity alert for individual failed login events."
+  },
+  {
+    "type": "Brute Force",
+    "pattern": "5 or more failed authentication events from the same source IP",
+    "severity": "High",
+    "mitre_technique": "T1110",
+    "category": "credential_access",
+    "description": "Detects repeated authentication failures that may indicate password guessing."
+  }
+]

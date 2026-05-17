@@ -8,6 +8,7 @@ import {
   FileSearch,
   Globe2,
   ListFilter,
+  Radio,
   ShieldAlert,
   ShieldCheck,
   Terminal,
@@ -19,6 +20,7 @@ const severityOrder = ["critical", "high", "medium", "low"];
 
 const navItems = [
   { id: "overview", label: "Overview", icon: BarChart3 },
+  { id: "monitoring", label: "Monitoring", icon: Radio },
   { id: "alerts", label: "Alerts", icon: ShieldAlert },
   { id: "logs", label: "Log Analysis", icon: FileSearch },
   { id: "iocs", label: "IOCs", icon: Globe2 },
@@ -29,6 +31,7 @@ function App() {
   const [samples, setSamples] = useState([]);
   const [selectedSample, setSelectedSample] = useState("soc_mixed_attack_demo.log");
   const [analysis, setAnalysis] = useState(null);
+  const [liveFeed, setLiveFeed] = useState(null);
   const [status, setStatus] = useState("Loading sample investigation...");
 
   useEffect(() => {
@@ -48,6 +51,13 @@ function App() {
         setStatus("Live sample analysis loaded");
       })
       .catch(() => setStatus("Backend is offline. Start FastAPI to load live detections."));
+  }, [selectedSample]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/monitoring/live`)
+      .then((response) => response.json())
+      .then((data) => setLiveFeed(data))
+      .catch(() => setLiveFeed(null));
   }, [selectedSample]);
 
   const summary = analysis?.summary || {};
@@ -136,11 +146,85 @@ function App() {
           />
         )}
 
+        {activeView === "monitoring" && <MonitoringView liveFeed={liveFeed} />}
         {activeView === "alerts" && <AlertsView alerts={alerts} />}
         {activeView === "logs" && <LogsView events={events} />}
         {activeView === "iocs" && <IocsView iocs={iocs} summary={summary} />}
       </section>
     </main>
+  );
+}
+
+function MonitoringView({ liveFeed }) {
+  const alerts = liveFeed?.alerts || [];
+  const events = liveFeed?.events || [];
+  const iocs = liveFeed?.iocs || {};
+  const datasets = liveFeed?.datasets || [];
+  const highPriority = alerts.filter((alert) => ["critical", "high"].includes(alert.severity)).length;
+
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric title="Monitored Datasets" value={datasets.length} icon={<Radio />} />
+        <Metric title="Live Alerts" value={liveFeed?.total_alerts || 0} icon={<AlertTriangle />} accent="orange" />
+        <Metric title="High Priority" value={highPriority} icon={<ShieldAlert />} accent="red" />
+        <Metric title="Tracked IOCs" value={iocs.total_iocs || 0} icon={<Globe2 />} accent="blue" />
+      </section>
+
+      <section className="split-grid">
+        <Panel title="Live Alert Feed">
+          <div className="compact-list">
+            {alerts.slice(0, 10).map((alert) => (
+              <article className="feed-card" key={`${alert.dataset}-${alert.alert_id}`}>
+                <div>
+                  <span className={`severity ${alert.severity}`}>{alert.severity}</span>
+                  <strong>{alert.type}</strong>
+                </div>
+                <p>{alert.description}</p>
+                <footer>
+                  <code>{alert.source_ip || "unknown source"}</code>
+                  <span>{alert.dataset}</span>
+                  <code>{alert.mitre?.technique_id || "UNKNOWN"}</code>
+                </footer>
+              </article>
+            ))}
+            {alerts.length === 0 && <EmptyState text="No live alerts available." />}
+          </div>
+        </Panel>
+
+        <Panel title="Monitoring Coverage">
+          <div className="coverage-list">
+            {datasets.map((dataset) => (
+              <div className="source-row" key={dataset}>
+                <span>{dataset}</span>
+                <strong>active</strong>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </section>
+
+      <Panel title="Security Event Stream">
+        <div className="data-table">
+          <div className="table-head stream-table">
+            <span>Time</span>
+            <span>Dataset</span>
+            <span>Source</span>
+            <span>Event</span>
+            <span>Evidence</span>
+          </div>
+          {events.slice(0, 16).map((event, index) => (
+            <div className="table-row stream-table" key={`${event.dataset}-${event.line_number}-${index}`}>
+              <span>{event.timestamp || "unknown"}</span>
+              <code>{event.dataset}</code>
+              <code>{event.source_ip || "unknown"}</code>
+              <span>{event.method || event.event_type || event.action}</span>
+              <p>{event.url || event.message || event.path || "security event"}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </>
   );
 }
 
@@ -350,6 +434,7 @@ function EmptyState({ text }) {
 function viewTitle(view) {
   return {
     overview: "Threat Overview",
+    monitoring: "Live Monitoring",
     alerts: "Alert Queue",
     logs: "Log Analysis",
     iocs: "IOC Intelligence",

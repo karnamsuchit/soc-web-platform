@@ -1,0 +1,26 @@
+[
+  {
+    "type": "Reconnaissance Activity",
+    "pattern": "/admin OR /wp-admin OR /.env OR /phpmyadmin OR /server-status",
+    "severity": "Medium",
+    "mitre_technique": "T1595",
+    "category": "reconnaissance",
+    "description": "Detects endpoint discovery against sensitive administrative or configuration paths."
+  },
+  {
+    "type": "404 Spike",
+    "pattern": "5 or more HTTP 404 responses from the same source IP",
+    "severity": "Medium",
+    "mitre_technique": "T1595.002",
+    "category": "reconnaissance",
+    "description": "Detects repeated failed path discovery attempts."
+  },
+  {
+    "type": "Request Spike",
+    "pattern": "Source IP generates significantly more events than dataset baseline",
+    "severity": "Medium",
+    "mitre_technique": "T1498",
+    "category": "anomaly",
+    "description": "Flags unusually high request volume for analyst review."
+  }
+]

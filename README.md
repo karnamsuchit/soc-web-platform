@@ -1,53 +1,89 @@
 # SOC Threat Detection & Security Monitoring Platform
 
-Beginner-friendly SOC portfolio project that demonstrates practical log analysis, threat detection, alert generation, IOC extraction, MITRE ATT&CK mapping, and security monitoring workflows.
+![Python](https://img.shields.io/badge/Python-FastAPI-3776AB)
+![React](https://img.shields.io/badge/Frontend-React-61DAFB)
+![Security](https://img.shields.io/badge/Focus-SOC%20Monitoring-36d399)
+![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-red)
 
-This project is designed for internship applications such as:
+Beginner-friendly SOC platform that demonstrates practical blue-team skills: log analysis, threat detection, alert generation, IOC extraction, MITRE ATT&CK mapping, and security monitoring workflows.
 
-- SOC Analyst Intern
-- Security Analyst Intern
-- Blue Team Intern
-- SIEM Analyst Intern
-- Cybersecurity Intern
+## Project Overview
 
-## What It Does
+This project is built for cybersecurity internship portfolios, especially SOC Analyst, Security Analyst, Blue Team, and SIEM Analyst roles. It avoids fake enterprise complexity and focuses on believable SOC fundamentals:
 
-- Uploads and analyzes security log files.
-- Parses Apache HTTP logs, JSON/JSONL events, CSV logs, and basic auth/syslog-style records.
-- Normalizes logs into consistent security events.
-- Detects common SOC scenarios:
-  - Failed login events
-  - Brute-force activity
-  - Suspicious IP watchlist hits
-  - Reconnaissance and sensitive path scanning
-  - 404 spikes
-  - SQL injection attempts
-  - XSS attempts
-  - Basic request-volume anomalies
-- Generates analyst-friendly alerts with evidence and recommendations.
-- Maps alerts to MITRE ATT&CK techniques.
-- Extracts IOCs such as IP addresses, URLs, domains, and hashes.
-- Presents findings in a dark SOC-style dashboard.
+- Continuous monitoring using preloaded security datasets
+- Manual upload support for custom log analysis
+- Detection engineering logic that is readable and explainable
+- Analyst-friendly alerts with evidence and recommendations
+- Dashboard views for monitoring, alert triage, logs, and IOCs
+
+## Features
+
+- Multi-format parsing for Apache logs, auth/syslog-style logs, CSV, JSON, and JSONL
+- Simulated live monitoring feed from built-in datasets
+- Failed login and brute-force detection
+- SQL injection and XSS detection
+- Reconnaissance and endpoint scanning detection
+- 404 spike and high-frequency request detection
+- Suspicious IP and IOC extraction
+- Severity classification: Low, Medium, High, Critical
+- MITRE ATT&CK mapping
+- SOC-style React dashboard with dark cybersecurity theme
+
+## Architecture
+
+```mermaid
+flowchart LR
+  A["Preloaded Logs / Uploaded Logs"] --> B["Parser"]
+  B --> C["Normalized Security Events"]
+  C --> D["Detection Engine"]
+  D --> E["SOC Alerts"]
+  D --> F["IOC Extraction"]
+  E --> G["MITRE ATT&CK Enrichment"]
+  G --> H["React SOC Dashboard"]
+  F --> H
+```
 
 ## Project Structure
 
 ```text
 soc-web-platform/
   backend/
-    api/                  FastAPI routes
-    config/               App settings
-    detection_engine/     Detection logic
-    mitre_mapper/         MITRE ATT&CK enrichment
-    parser/               Multi-format log parser
-    sample_logs/          Demo security datasets
-    uploads/              Runtime uploads, ignored by git
-  detection_rules/        Human-readable detection rule examples
-  docs/                   Architecture and improvement planning
-  frontend/               React SOC dashboard
+  frontend/
+  sample_logs/
+  detection_rules/
+  screenshots/
+  docs/
   README.md
+  requirements.txt
+  .gitignore
 ```
 
-## Backend Setup
+## Screenshots
+
+Screenshots are stored in `screenshots/`.
+
+- `dashboard-overview.png`
+- `alert-queue.png`
+- `ioc-table.png`
+- `log-viewer.png`
+
+## Detection Examples
+
+| Attack Type | Severity | MITRE ID |
+|-------------|----------|----------|
+| Brute Force | High | T1110 |
+| Failed Login | Low | T1110 |
+| SQL Injection | High | T1190 |
+| XSS Attempt | High | T1190 |
+| Reconnaissance | Medium | T1595 |
+| 404 Spike | Medium | T1595.002 |
+
+Each alert includes timestamp, severity, attack type, source IP, event description, evidence, recommendation, and MITRE ATT&CK mapping.
+
+## Setup Instructions
+
+### Backend
 
 ```bash
 cd backend
@@ -57,21 +93,13 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Backend runs at:
+Backend URL:
 
 ```text
 http://localhost:8000
 ```
 
-Useful endpoints:
-
-- `GET /` - backend health check
-- `GET /samples` - list included sample logs
-- `GET /analyze-sample/{filename}` - parse and detect threats in a sample log
-- `POST /upload` - upload `.log`, `.txt`, `.csv`, `.json`, or `.jsonl`
-- `GET /detect/{filename}` - run detection against an uploaded file
-
-## Frontend Setup
+### Frontend
 
 ```bash
 cd frontend
@@ -79,67 +107,47 @@ npm install
 npm run dev
 ```
 
-Frontend runs at:
+Frontend URL:
 
 ```text
 http://localhost:5173
 ```
 
-The dashboard expects the backend at `http://localhost:8000`. To use a different backend URL, set `VITE_API_BASE`.
+## Usage Guide
 
-## Sample Logs
+1. Start the backend.
+2. Start the frontend.
+3. Open the `Monitoring` tab for the simulated live SOC feed.
+4. Use `Overview` for severity, MITRE, and threat metrics.
+5. Use `Alerts` to review generated detections.
+6. Use `Log Analysis` to inspect normalized event evidence.
+7. Use `IOCs` to review suspicious IPs, URLs, domains, and hashes.
 
-Included demo datasets:
+Useful API routes:
 
-- `soc_mixed_attack_demo.log` - mixed HTTP attacks, recon, suspicious IPs, and SSH failures
-- `auth_bruteforce.jsonl` - structured failed login events
-- `web_attacks.csv` - CSV web attack examples
+- `GET /samples`
+- `GET /analyze-sample/{filename}`
+- `GET /monitoring/live`
+- `POST /upload`
+- `GET /detect/{filename}`
 
-## Example Detection Output
+## Documentation
 
-An alert includes:
+- [Architecture](docs/architecture.md)
+- [Detection Guide](docs/detections.md)
+- [Setup](docs/setup.md)
+- [Usage](docs/usage.md)
+- [Improvement Plan](docs/IMPROVEMENT_PLAN.md)
 
-- Alert ID
-- Severity
-- Category
-- Source IP
-- Timestamp
-- URL or affected path
-- Evidence
-- Analyst recommendation
-- MITRE ATT&CK tactic and technique
+## Future Improvements
 
-## Architecture
+- SQLite persistence for alerts, events, uploads, and triage status
+- Alert filtering and case status workflow
+- CSV/JSON alert and IOC exports
+- Docker setup for easier demos
+- Report generation for SOC summaries
+- Unit tests for parser and detection logic
 
-```mermaid
-flowchart LR
-  A["Log File"] --> B["Parser"]
-  B --> C["Normalized Events"]
-  C --> D["Detection Engine"]
-  D --> E["Alerts"]
-  D --> F["IOC Extraction"]
-  E --> G["MITRE Mapper"]
-  G --> H["SOC Dashboard"]
-  F --> H
-```
+## Resume Alignment
 
-## Screenshots
-
-Add portfolio screenshots here after running the frontend:
-
-- `screenshots/dashboard-overview.png`
-- `screenshots/alert-queue.png`
-- `screenshots/ioc-panel.png`
-
-## Roadmap
-
-- Add unit tests for parser and detection logic.
-- Add SQLite persistence for uploaded files, events, alerts, and triage status.
-- Add alert filtering and CSV/JSON exports.
-- Add Docker setup for easier demos.
-- Add report generation for analyst summaries.
-- Add screenshots and a short demo workflow.
-
-## Portfolio Notes
-
-This project is intentionally realistic without pretending to be an enterprise SIEM. It focuses on the blue-team fundamentals interviewers care about: parsing logs, identifying suspicious behavior, explaining detections, mapping to MITRE ATT&CK, and presenting findings in a clear analyst workflow.
+This repository supports resume claims around threat detection, security monitoring, log analysis, SOC workflows, MITRE ATT&CK, SIEM concepts, and IOC identification.
