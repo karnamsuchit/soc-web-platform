@@ -7,6 +7,7 @@ import {
   Clock3,
   FileSearch,
   Globe2,
+  ListFilter,
   ShieldAlert,
   ShieldCheck,
   Terminal,
@@ -16,7 +17,15 @@ import "./styles.css";
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const severityOrder = ["critical", "high", "medium", "low"];
 
+const navItems = [
+  { id: "overview", label: "Overview", icon: BarChart3 },
+  { id: "alerts", label: "Alerts", icon: ShieldAlert },
+  { id: "logs", label: "Log Analysis", icon: FileSearch },
+  { id: "iocs", label: "IOCs", icon: Globe2 },
+];
+
 function App() {
+  const [activeView, setActiveView] = useState("overview");
   const [samples, setSamples] = useState([]);
   const [selectedSample, setSelectedSample] = useState("soc_mixed_attack_demo.log");
   const [analysis, setAnalysis] = useState(null);
@@ -25,12 +34,7 @@ function App() {
   useEffect(() => {
     fetch(`${API_BASE}/samples`)
       .then((response) => response.json())
-      .then((data) => {
-        setSamples(data.samples || []);
-        if (data.samples?.[0]?.filename && !selectedSample) {
-          setSelectedSample(data.samples[0].filename);
-        }
-      })
+      .then((data) => setSamples(data.samples || []))
       .catch(() => setStatus("Backend is offline. Start FastAPI to load live detections."));
   }, []);
 
@@ -52,13 +56,21 @@ function App() {
   const iocs = analysis?.iocs || {};
   const topAlert = alerts.find((alert) => alert.severity === "critical") || alerts[0];
 
-  const mitreCounts = useMemo(() => {
-    return alerts.reduce((acc, alert) => {
+  const severityData = severityOrder.map((key) => ({
+    label: key,
+    value: summary.severity_counts?.[key] || 0,
+  }));
+
+  const mitreData = useMemo(() => {
+    const counts = alerts.reduce((acc, alert) => {
       const tactic = alert.mitre?.tactic || "Unknown";
       acc[tactic] = (acc[tactic] || 0) + 1;
       return acc;
     }, {});
+    return Object.entries(counts).map(([label, value]) => ({ label, value }));
   }, [alerts]);
+
+  const highCritical = (summary.severity_counts?.critical || 0) + (summary.severity_counts?.high || 0);
 
   return (
     <main className="app-shell">
@@ -67,14 +79,25 @@ function App() {
           <ShieldCheck size={28} />
           <div>
             <strong>SOC Sentinel</strong>
-            <span>Threat Monitoring</span>
+            <span>Threat Detection</span>
           </div>
         </div>
-        <nav>
-          <a className="active"><BarChart3 size={18} /> Overview</a>
-          <a><ShieldAlert size={18} /> Alerts</a>
-          <a><FileSearch size={18} /> Log Analysis</a>
-          <a><Globe2 size={18} /> IOCs</a>
+
+        <nav className="nav-list" aria-label="SOC sections">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                className={activeView === item.id ? "active" : ""}
+                onClick={() => setActiveView(item.id)}
+                type="button"
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
       </aside>
 
@@ -82,10 +105,10 @@ function App() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Security Operations Center</p>
-            <h1>Threat Detection & Log Monitoring</h1>
+            <h1>{viewTitle(activeView)}</h1>
           </div>
           <div className="sample-picker">
-            <label htmlFor="sample">Sample Dataset</label>
+            <label htmlFor="sample">Dataset</label>
             <select id="sample" value={selectedSample} onChange={(event) => setSelectedSample(event.target.value)}>
               {samples.length === 0 && <option value={selectedSample}>{selectedSample}</option>}
               {samples.map((sample) => (
@@ -101,58 +124,149 @@ function App() {
           <strong>{analysis?.detected_format || "waiting for logs"}</strong>
         </div>
 
-        <section className="metrics-grid">
-          <Metric title="Events Parsed" value={analysis?.parsed_events || 0} icon={<Terminal />} />
-          <Metric title="Total Alerts" value={analysis?.total_alerts || 0} icon={<AlertTriangle />} accent="orange" />
-          <Metric title="High + Critical" value={(summary.severity_counts?.critical || 0) + (summary.severity_counts?.high || 0)} icon={<ShieldAlert />} accent="red" />
-          <Metric title="Extracted IOCs" value={iocs.total_iocs || 0} icon={<Globe2 />} accent="blue" />
-        </section>
+        {activeView === "overview" && (
+          <Overview
+            analysis={analysis}
+            alerts={alerts}
+            highCritical={highCritical}
+            iocs={iocs}
+            severityData={severityData}
+            mitreData={mitreData}
+            topAlert={topAlert}
+          />
+        )}
 
-        <section className="analysis-grid">
-          <Panel title="Severity Distribution">
-            <BarList data={severityOrder.map((key) => ({ label: key, value: summary.severity_counts?.[key] || 0 }))} />
-          </Panel>
+        {activeView === "alerts" && <AlertsView alerts={alerts} />}
+        {activeView === "logs" && <LogsView events={events} />}
+        {activeView === "iocs" && <IocsView iocs={iocs} summary={summary} />}
+      </section>
+    </main>
+  );
+}
 
-          <Panel title="MITRE ATT&CK Tactics">
-            <BarList data={Object.entries(mitreCounts).map(([label, value]) => ({ label, value }))} />
-          </Panel>
+function Overview({ analysis, alerts, highCritical, iocs, severityData, mitreData, topAlert }) {
+  return (
+    <>
+      <section className="metrics-grid">
+        <Metric title="Events Parsed" value={analysis?.parsed_events || 0} icon={<Terminal />} />
+        <Metric title="Total Alerts" value={analysis?.total_alerts || 0} icon={<AlertTriangle />} accent="orange" />
+        <Metric title="High + Critical" value={highCritical} icon={<ShieldAlert />} accent="red" />
+        <Metric title="Extracted IOCs" value={iocs.total_iocs || 0} icon={<Globe2 />} accent="blue" />
+      </section>
 
-          <Panel title="Priority Alert">
-            {topAlert ? <AlertDetail alert={topAlert} /> : <EmptyState text="No alerts detected in the current dataset." />}
-          </Panel>
-        </section>
+      <section className="overview-grid">
+        <Panel title="Severity Distribution">
+          <BarList data={severityData} />
+        </Panel>
 
-        <section className="wide-grid">
-          <Panel title="Alert Queue">
-            <div className="alert-list">
-              {alerts.slice(0, 8).map((alert) => <AlertRow key={alert.alert_id} alert={alert} />)}
-              {alerts.length === 0 && <EmptyState text="No alerts available." />}
-            </div>
-          </Panel>
+        <Panel title="MITRE ATT&CK Tactics">
+          <BarList data={mitreData} />
+        </Panel>
 
-          <Panel title="IOC Snapshot">
-            <div className="ioc-grid">
-              <IocList title="Source IPs" values={iocs.ips || []} />
-              <IocList title="URLs" values={iocs.urls || []} />
-            </div>
-          </Panel>
-        </section>
+        <Panel title="Priority Alert">
+          {topAlert ? <AlertDetail alert={topAlert} /> : <EmptyState text="No alerts detected in the current dataset." />}
+        </Panel>
+      </section>
 
-        <Panel title="Event Timeline">
-          <div className="timeline">
-            {events.slice(0, 12).map((event, index) => (
-              <div className="timeline-item" key={`${event.line_number}-${index}`}>
-                <Clock3 size={16} />
-                <span>{event.timestamp || "unknown time"}</span>
-                <strong>{event.source_ip || "unknown source"}</strong>
-                <code>{event.method || event.event_type}</code>
-                <p>{event.url || event.message || "security event"}</p>
-              </div>
-            ))}
+      <section className="split-grid">
+        <Panel title="Recent Alerts">
+          <div className="compact-list">
+            {alerts.slice(0, 6).map((alert) => <AlertRow key={alert.alert_id} alert={alert} />)}
+            {alerts.length === 0 && <EmptyState text="No alerts available." />}
+          </div>
+        </Panel>
+
+        <Panel title="IOC Snapshot">
+          <div className="ioc-grid">
+            <IocList title="Source IPs" values={iocs.ips || []} />
+            <IocList title="URLs" values={iocs.urls || []} />
           </div>
         </Panel>
       </section>
-    </main>
+    </>
+  );
+}
+
+function AlertsView({ alerts }) {
+  return (
+    <Panel title="Alert Investigation Queue">
+      <div className="table-toolbar">
+        <ListFilter size={17} />
+        <span>{alerts.length} detections generated from the selected dataset</span>
+      </div>
+      <div className="data-table">
+        <div className="table-head alert-table">
+          <span>Severity</span>
+          <span>Alert</span>
+          <span>Source</span>
+          <span>MITRE</span>
+          <span>Recommendation</span>
+        </div>
+        {alerts.map((alert) => (
+          <div className="table-row alert-table" key={alert.alert_id}>
+            <span className={`severity ${alert.severity}`}>{alert.severity}</span>
+            <div>
+              <strong>{alert.type}</strong>
+              <p>{alert.description}</p>
+            </div>
+            <code>{alert.source_ip || "unknown"}</code>
+            <code>{alert.mitre?.technique_id || "UNKNOWN"}</code>
+            <p>{alert.recommendation || "Review event context."}</p>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function LogsView({ events }) {
+  return (
+    <Panel title="Normalized Log Events">
+      <div className="data-table">
+        <div className="table-head log-table">
+          <span>Time</span>
+          <span>Source</span>
+          <span>Action</span>
+          <span>Status</span>
+          <span>Evidence</span>
+        </div>
+        {events.map((event, index) => (
+          <div className="table-row log-table" key={`${event.line_number}-${index}`}>
+            <span>{event.timestamp || "unknown"}</span>
+            <code>{event.source_ip || "unknown"}</code>
+            <span>{event.method || event.event_type || "event"}</span>
+            <code>{event.status || event.action || "observed"}</code>
+            <p>{event.url || event.message || event.path || "security event"}</p>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function IocsView({ iocs, summary }) {
+  return (
+    <section className="split-grid">
+      <Panel title="Indicators of Compromise">
+        <div className="ioc-grid ioc-grid-large">
+          <IocList title="IP Addresses" values={iocs.ips || []} />
+          <IocList title="Domains" values={iocs.domains || []} />
+          <IocList title="URLs" values={iocs.urls || []} />
+          <IocList title="Hashes" values={iocs.hashes || []} />
+        </div>
+      </Panel>
+
+      <Panel title="Top Source IPs">
+        <div className="compact-list">
+          {(summary.top_source_ips || []).map((item) => (
+            <div className="source-row" key={item.ip}>
+              <code>{item.ip}</code>
+              <strong>{item.count}</strong>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </section>
   );
 }
 
@@ -176,10 +290,11 @@ function Panel({ title, children }) {
 }
 
 function BarList({ data }) {
-  const max = Math.max(...data.map((item) => item.value), 1);
+  const normalized = data.length ? data : [{ label: "No data", value: 0 }];
+  const max = Math.max(...normalized.map((item) => item.value), 1);
   return (
     <div className="bar-list">
-      {data.map((item) => (
+      {normalized.map((item) => (
         <div className="bar-row" key={item.label}>
           <span>{item.label}</span>
           <div><i style={{ width: `${(item.value / max) * 100}%` }} /></div>
@@ -222,14 +337,23 @@ function IocList({ title, values }) {
   return (
     <div className="ioc-list">
       <h3>{title}</h3>
-      {values.slice(0, 8).map((value) => <code key={value}>{value}</code>)}
-      {values.length === 0 && <span>No IOCs</span>}
+      {values.slice(0, 10).map((value) => <code key={value}>{value}</code>)}
+      {values.length === 0 && <span>No indicators found</span>}
     </div>
   );
 }
 
 function EmptyState({ text }) {
   return <p className="empty-state">{text}</p>;
+}
+
+function viewTitle(view) {
+  return {
+    overview: "Threat Overview",
+    alerts: "Alert Queue",
+    logs: "Log Analysis",
+    iocs: "IOC Intelligence",
+  }[view];
 }
 
 createRoot(document.getElementById("root")).render(<App />);
