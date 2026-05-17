@@ -7,7 +7,9 @@ UPLOAD_DIR = BASE_DIR / "uploads"
 ALLOWED_EXTENSIONS = [
     ".log",
     ".txt",
-    ".csv"
+    ".csv",
+    ".json",
+    ".jsonl"
 ]
 
 MAX_FILE_SIZE = 50 * 1024 * 1024

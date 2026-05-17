@@ -6,6 +6,7 @@ import uuid
 from config.settings import (
     UPLOAD_DIR,
     ALLOWED_EXTENSIONS,
+    MAX_FILE_SIZE,
 )
 
 router = APIRouter()
@@ -30,8 +31,16 @@ async def upload_log_file(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    if file_path.stat().st_size > MAX_FILE_SIZE:
+        file_path.unlink(missing_ok=True)
+        raise HTTPException(
+            status_code=413,
+            detail="File exceeds maximum allowed size"
+        )
+
     return {
         "message": "File uploaded successfully",
         "filename": unique_filename,
-        "original_filename": file.filename
+        "original_filename": Path(file.filename).name,
+        "size_bytes": file_path.stat().st_size
     }

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "SQL Injection Pattern",
+    "severity": "high",
+    "category": "web_attack",
+    "mitre_technique": "T1190",
+    "description": "Detects common SQL injection payloads in HTTP URLs and query strings.",
+    "analyst_action": "Review request context, impacted route, server response, and application input validation."
+  },
+  {
+    "name": "Cross-Site Scripting Pattern",
+    "severity": "high",
+    "category": "web_attack",
+    "mitre_technique": "T1190",
+    "description": "Detects script tags, JavaScript handlers, and encoded XSS payload indicators.",
+    "analyst_action": "Validate whether output encoding and request filtering blocked the payload."
+  },
+  {
+    "name": "Sensitive Path Reconnaissance",
+    "severity": "medium",
+    "category": "reconnaissance",
+    "mitre_technique": "T1595",
+    "description": "Detects requests to administrative, backup, debug, and configuration paths.",
+    "analyst_action": "Check whether the source requested multiple sensitive paths or returned successful responses."
+  },
+  {
+    "name": "Authentication Brute Force",
+    "severity": "high",
+    "category": "credential_access",
+    "mitre_technique": "T1110",
+    "description": "Detects repeated failed authentication events from the same source.",
+    "analyst_action": "Investigate affected accounts, lock or reset credentials if needed, and block abusive sources."
+  }
+]
