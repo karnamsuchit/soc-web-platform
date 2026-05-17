@@ -1,7 +1,0 @@
-timestamp,source_ip,method,url,status,user_agent,event_type,category,action
-2026-05-17T11:00:01+05:30,198.51.100.44,GET,/login,200,Mozilla/5.0,http_request,web,observed
-2026-05-17T11:00:18+05:30,198.51.100.45,GET,/item?id=10%27%20OR%20%271%27=%271,500,sqlmap/1.7,http_request,web,observed
-2026-05-17T11:00:28+05:30,198.51.100.46,GET,/comment?text=%3Cimg%20src=x%20onerror=alert(1)%3E,200,Mozilla/5.0,http_request,web,observed
-2026-05-17T11:01:00+05:30,203.0.113.90,GET,/backup.zip,404,python-requests/2.31,http_request,web,observed
-2026-05-17T11:01:04+05:30,203.0.113.90,GET,/config.php,404,python-requests/2.31,http_request,web,observed
-2026-05-17T11:01:08+05:30,203.0.113.90,GET,/.env,404,python-requests/2.31,http_request,web,observed

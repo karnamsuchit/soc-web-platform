@@ -1,6 +1,0 @@
-{"timestamp":"2026-05-17T10:15:00+05:30","event_type":"authentication","category":"authentication","action":"failed","source_ip":"10.0.4.50","username":"admin","host":"vpn-gateway"}
-{"timestamp":"2026-05-17T10:15:08+05:30","event_type":"authentication","category":"authentication","action":"failed","source_ip":"10.0.4.50","username":"administrator","host":"vpn-gateway"}
-{"timestamp":"2026-05-17T10:15:17+05:30","event_type":"authentication","category":"authentication","action":"failed","source_ip":"10.0.4.50","username":"svc_backup","host":"vpn-gateway"}
-{"timestamp":"2026-05-17T10:15:29+05:30","event_type":"authentication","category":"authentication","action":"failed","source_ip":"10.0.4.50","username":"root","host":"vpn-gateway"}
-{"timestamp":"2026-05-17T10:15:38+05:30","event_type":"authentication","category":"authentication","action":"failed","source_ip":"10.0.4.50","username":"test","host":"vpn-gateway"}
-{"timestamp":"2026-05-17T10:16:00+05:30","event_type":"authentication","category":"authentication","action":"success","source_ip":"10.0.4.12","username":"suchit","host":"vpn-gateway"}

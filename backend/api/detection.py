@@ -7,7 +7,6 @@ from detection_engine.detector import run_detection_engine
 from mitre_mapper.mapper import map_alerts_to_mitre
 
 router = APIRouter()
-SAMPLE_LOG_DIR = Path(__file__).resolve().parent.parent / "sample_logs"
 ROOT_SAMPLE_LOG_DIR = Path(__file__).resolve().parents[2] / "sample_logs"
 
 @router.get("/detect/{filename}")
@@ -154,19 +153,14 @@ def analyze_file(file_path, filename):
 
 
 def get_sample_files():
-    sample_files = []
-    for directory in [ROOT_SAMPLE_LOG_DIR, SAMPLE_LOG_DIR]:
-        if directory.exists():
-            sample_files.extend(
-                path
-                for path in sorted(directory.iterdir())
-                if path.suffix.lower() in [".log", ".txt", ".csv", ".json", ".jsonl"]
-            )
+    if not ROOT_SAMPLE_LOG_DIR.exists():
+        return []
 
-    unique_files = {}
-    for path in sample_files:
-        unique_files[path.name] = path
-    return list(unique_files.values())
+    return [
+        path
+        for path in sorted(ROOT_SAMPLE_LOG_DIR.iterdir())
+        if path.suffix.lower() in [".log", ".txt", ".csv", ".json", ".jsonl"]
+    ]
 
 
 def find_sample_file(filename):
